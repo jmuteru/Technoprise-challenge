@@ -15,7 +15,7 @@ var BlogCollection *mongo.Collection
 func InitDatabase() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	//env variable for
+	// env variable for
 	uri := os.Getenv("MONGODB_ATLAS_URI")
 	if uri == "" {
 		// fallback to local instance of mongodb if we cant find atlas uri from .env
