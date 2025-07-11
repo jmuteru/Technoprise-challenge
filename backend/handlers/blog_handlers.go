@@ -21,7 +21,16 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	cur, err := database.BlogCollection.Find(ctx, bson.M{})
+	search := r.URL.Query().Get("search")
+	filter := bson.M{}
+	if search != "" {
+		filter = bson.M{"$or": []bson.M{
+			{"title": bson.M{"$regex": search, "$options": "i"}},
+			{"content": bson.M{"$regex": search, "$options": "i"}},
+		}}
+	}
+
+	cur, err := database.BlogCollection.Find(ctx, filter)
 	if err != nil {
 		http.Error(w, "Failed to fetch posts", http.StatusInternalServerError)
 		return
