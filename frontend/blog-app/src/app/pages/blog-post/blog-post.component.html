@@ -1,0 +1,66 @@
+<div class="max-w-4xl mx-auto px-2 sm:px-8 py-4 sm:py-8">
+  <!-- Back Button -->
+  <button 
+    (click)="goBack()"
+    class="flex items-center text-blue-600 hover:text-blue-800 mb-6 sm:mb-8 transition-colors text-base sm:text-lg">
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+    </svg>
+    Back to Blog Posts
+  </button>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="text-center py-12">
+    <div class="text-red-600 mb-4">{{ error }}</div>
+    <button (click)="goBack()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+      Go Back
+    </button>
+  </div>
+
+  <!-- Blog Post Content -->
+  <article *ngIf="post && !loading" class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <!-- Header Image -->
+    <div class="h-40 sm:h-64 bg-gray-200 flex items-center justify-center overflow-hidden">
+      <img *ngIf="post?.image" [src]="'http://localhost:8080/images/' + post.image" alt="{{ post.title }}" class="object-cover w-full h-full" />
+      <span *ngIf="!post?.image" class="text-gray-500">Blog Post Image</span>
+    </div>
+
+    <!-- Post Header -->
+    <div class="p-4 sm:p-8">
+      <div class="mb-2 sm:mb-4">
+        <span class="text-xs sm:text-sm text-gray-500">{{ post.date | date:'MMMM dd, yyyy' }}</span>
+      </div>
+      
+      <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">{{ post.title }}</h1>
+      
+      <div class="flex flex-col sm:flex-row items-start sm:items-center text-xs sm:text-sm text-gray-500 mb-4 sm:mb-8 gap-2 sm:gap-0">
+        <span>{{ post.content.length > 1000 ? '5+ min read' : '2 min read' }}</span>
+        <span class="hidden sm:inline mx-2">•</span>
+        <span>By Admin</span>
+      </div>
+
+      <!-- Post Content -->
+      <div class="prose prose-sm sm:prose-lg max-w-none">
+        <div [innerHTML]="post.content" class="text-gray-700 leading-relaxed"></div>
+      </div>
+
+      <!-- Post Footer -->
+      <div class="mt-8 sm:mt-12 pt-8 border-t border-gray-200">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center space-x-4">
+          </div>
+          <button 
+            (click)="goBack()"
+            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors w-full sm:w-auto">
+            Back to Posts
+          </button>
+        </div>
+      </div>
+    </div>
+  </article>
+</div>

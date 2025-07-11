@@ -1,0 +1,63 @@
+<div class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 overflow-y-auto px-2 sm:px-0">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-lg sm:max-w-2xl p-4 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+    <!-- Close Button -->
+    <button class="absolute top-2 sm:top-4 right-2 sm:right-4 text-gray-500 hover:text-gray-700 text-2xl" (click)="onClose()" aria-label="Close">&times;</button>
+    <!-- Modal Title -->
+    <h2 class="text-base sm:text-lg font-semibold mb-1">Create Blog Post</h2>
+    <p class="text-gray-600 mb-4 sm:mb-6">Enter your blog details here. Click save when you're done.</p>
+    <form (ngSubmit)="onSubmit()" autocomplete="off">
+      <!-- Blog Title -->
+      <div class="mb-3 sm:mb-4">
+        <label class="block text-xs sm:text-sm font-medium mb-1" for="title">Blog Title</label>
+        <input id="title" name="title" type="text" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" [(ngModel)]="title" (input)="onTitleChange()" [class.border-red-500]="errors['title']">
+        <div *ngIf="errors['title']" class="text-red-500 text-xs mt-1">{{ errors['title'] }}</div>
+      </div>
+      <!-- Blog Date -->
+      <div class="mb-3 sm:mb-4">
+        <label class="block text-xs sm:text-sm font-medium mb-1" for="date">Blog Date</label>
+        <input id="date" name="date" type="date" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" [(ngModel)]="date" [class.border-red-500]="errors['date']">
+        <div *ngIf="errors['date']" class="text-red-500 text-xs mt-1">{{ errors['date'] }}</div>
+      </div>
+      <!-- Slug -->
+      <div class="mb-3 sm:mb-4">
+        <label class="block text-xs sm:text-sm font-medium mb-1" for="slug">Slug</label>
+        <input id="slug" name="slug" type="text" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" [(ngModel)]="slug" [class.border-red-500]="errors['slug']">
+        <div *ngIf="errors['slug']" class="text-red-500 text-xs mt-1">{{ errors['slug'] }}</div>
+      </div>
+      <!-- Image Upload -->
+      <div class="mb-3 sm:mb-4">
+        <label class="block text-xs sm:text-sm font-medium mb-1">Image</label>
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition" (click)="imageInput.click()">
+          <input #imageInput type="file" accept="image/png, image/jpeg" class="hidden" (change)="onFileSelected($event)">
+          <ng-container *ngIf="imagePreview; else uploadPrompt">
+            <img [src]="imagePreview" alt="Image preview" class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded mb-2">
+            <span class="text-xs text-gray-500">{{ imageFile?.name }}</span>
+          </ng-container>
+          <ng-template #uploadPrompt>
+            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0l-4 4m4-4l4 4M3 20h18" />
+            </svg>
+            <span class="text-xs text-gray-500 mb-2">Please upload images in 100x100 pixels size, in either PNG or JPEG format.</span>
+            <button type="button" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mt-2" (click)="$event.stopPropagation(); imageInput.click();">Browse Files</button>
+          </ng-template>
+        </div>
+        <div *ngIf="errors['image']" class="text-red-500 text-xs mt-1">{{ errors['image'] }}</div>
+      </div>
+      <!-- Content -->
+      <div class="mb-3 sm:mb-4">
+        <label class="block text-xs sm:text-sm font-medium mb-1" for="content">Content</label>
+        <textarea id="content" name="content" rows="5" maxlength="1000" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" [(ngModel)]="content" [class.border-red-500]="errors['content']"></textarea>
+        <div class="flex justify-between text-xs mt-1">
+          <span *ngIf="errors['content']" class="text-red-500">{{ errors['content'] }}</span>
+          <span class="text-gray-400 ml-auto">{{ content.length }}/1000</span>
+        </div>
+      </div>
+      <!-- Save Button -->
+      <div class="flex justify-end mt-6">
+        <button type="submit" class="px-6 py-2 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition-colors disabled:opacity-50 w-full sm:w-auto" [disabled]="submitting || !validate()">
+          {{ submitting ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div> 

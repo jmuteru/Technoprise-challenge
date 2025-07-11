@@ -1,0 +1,94 @@
+<app-create-post-modal
+  *ngIf="showCreatePostModal"
+  (close)="showCreatePostModal = false"
+  (postCreated)="onPostCreated()">
+</app-create-post-modal>
+<div class="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-8">
+  <!-- Responsive Header, Search, and Actions -->
+  <div class="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="flex flex-col md:flex-row md:items-center md:gap-6 w-full">
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 md:mb-0 md:mr-6 whitespace-nowrap">The Accessibility Blog</h1>
+      <!-- Removed the search posts input to match the design -->
+    </div>
+    <!-- Removed Filter and Sort by Date buttons -->
+  </div>
+  <p class="text-gray-600 mb-6 sm:mb-8 hidden md:block text-base sm:text-lg">The voice of the excluded</p>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="text-center py-12">
+    <div class="text-red-600 mb-4">{{ error }}</div>
+    <button (click)="loadPosts()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+      Try Again
+    </button>
+  </div>
+
+  <!-- Blog Grid -->
+  <div *ngIf="!loading && !error" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+    <!-- Blog Card -->
+    <div *ngFor="let post of posts" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
+      <div class="h-40 sm:h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
+        <img *ngIf="post.image" [src]="'http://localhost:8080/images/' + post.image" alt="{{ post.title }}" class="object-cover w-full h-full" />
+        <span *ngIf="!post.image" class="text-gray-500">Blog Image</span>
+      </div>
+      <div class="p-4 sm:p-6 flex flex-col flex-1">
+        <div class="flex items-center text-xs sm:text-sm text-gray-500 mb-2">
+          <span>{{ post.date | date:'MMM dd, yyyy' }}</span>
+        </div>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer">
+          {{ post.title }}
+        </h3>
+        <p class="text-gray-600 mb-4 line-clamp-3 text-sm sm:text-base">
+          {{ post.excerpt }}
+        </p>
+        <div class="flex items-center justify-between mt-auto">
+          <span class="text-xs sm:text-sm text-gray-500">{{ post.content.length > 1000 ? '5+ min read' : '2 min read' }}</span>
+          <a [routerLink]="['/posts', post.slug]" class="text-blue-600 hover:text-blue-800 font-medium text-xs sm:text-sm">
+            Read More →
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && posts.length === 0" class="text-center py-12">
+    <div class="text-gray-500 text-lg mb-4">No blog posts found.</div>
+    <p class="text-gray-400">Try adjusting your search terms or check back later.</p>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && !error && totalPages > 1" class="flex justify-center items-center space-x-2">
+    <button 
+      (click)="onPageChange(currentPage - 1)"
+      [disabled]="currentPage === 1"
+      class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+      Previous
+    </button>
+    
+    <button 
+      *ngFor="let page of getPageNumbers()"
+      (click)="onPageChange(page)"
+      [class]="page === currentPage ? 'px-3 py-2 bg-blue-600 text-white rounded-lg' : 'px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50'">
+      {{ page }}
+    </button>
+    
+    <span *ngIf="totalPages > 5 && currentPage < totalPages - 2" class="px-3 py-2 text-gray-500">...</span>
+    
+    <button 
+      (click)="onPageChange(currentPage + 1)"
+      [disabled]="currentPage === totalPages"
+      class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+      Next
+    </button>
+  </div>
+
+  <!-- Results Info -->
+  <div *ngIf="!loading && !error && posts.length > 0" class="text-center text-sm text-gray-500 mt-4">
+    Showing {{ (currentPage - 1) * postsPerPage + 1 }} to {{ math.min(currentPage * postsPerPage, totalPosts) }} of {{ totalPosts }} posts
+  </div>
+</div>

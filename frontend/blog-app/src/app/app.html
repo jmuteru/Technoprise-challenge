@@ -1,0 +1,12 @@
+<!-- App Shell -->
+<app-header (createPostRequested)="onCreatePostRequested()"></app-header>
+
+<main class="min-h-screen bg-gray-50">
+  <router-outlet></router-outlet>
+</main>
+
+<app-footer></app-footer>
+
+<app-create-post-modal *ngIf="showCreatePostModal" (close)="closeCreatePostModal()"></app-create-post-modal>
+
+<!-- Footer will be added here later -->
